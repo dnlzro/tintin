@@ -1,0 +1,51 @@
+---
+import type { ComponentProps } from "astro/types";
+import Panel, { timescales } from "../components/Panel.astro";
+
+type Params = Pick<ComponentProps<typeof Panel>, "timescale">;
+
+let { timescale = "week" } = Astro.params as Params;
+
+if (!timescales.includes(timescale)) {
+    timescale = "week";
+}
+
+const timezone = (Astro.locals.runtime.cf?.timezone as string) ?? "UTC";
+---
+
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width" />
+        <link rel="icon" type="image/png" href="/favicon.png" />
+        <meta name="generator" content={Astro.generator} />
+        <meta name="darkreader-lock" />
+        <title>{`What a ${timescale}, huh?`}</title>
+    </head>
+    <body>
+        <Panel {timescale} {timezone} />
+    </body>
+</html>
+
+<style is:global>
+    @font-face {
+        font-family: "Marker Felt";
+        src: url("/fonts/MarkerFelt.ttf") format("truetype");
+    }
+
+    html,
+    body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #f4f3f1;
+    }
+
+    svg {
+        display: block;
+        width: auto;
+        max-width: 100%;
+        max-height: 100%;
+        margin-inline: auto;
+    }
+</style>

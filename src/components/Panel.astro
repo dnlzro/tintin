@@ -1,0 +1,71 @@
+---
+import bg from "../assets/bg.png";
+
+export const timescales = ["day", "week", "month", "year"] as const;
+
+interface Props {
+    timescale: (typeof timescales)[number];
+    timezone: string;
+}
+
+const { timescale, timezone: timeZone } = Astro.props;
+
+const date = new Date();
+const formatOptions: Intl.DateTimeFormatOptions = { timeZone };
+
+switch (timescale) {
+    case "day":
+        formatOptions.hour = "numeric";
+        formatOptions.minute = "numeric";
+        formatOptions.hour12 = true;
+        break;
+    case "week":
+        formatOptions.weekday = "long";
+        break;
+    case "month":
+        formatOptions.day = "numeric";
+        break;
+    case "year":
+        formatOptions.month = "long";
+        break;
+}
+
+const formatted = new Intl.DateTimeFormat("en", formatOptions).format(date);
+
+let captainIts = "";
+
+if (timescale == "month") {
+    let suffix = "";
+    if (["1", "21", "31"].includes(formatted)) suffix = "st";
+    else if (["2", "22"].includes(formatted)) suffix = "nd";
+    else if (["3", "23"].includes(formatted)) suffix = "rd";
+    else suffix = "th";
+    captainIts = `the ${formatted}${suffix}`;
+} else {
+    captainIts = formatted;
+}
+---
+
+<svg
+    width="1037"
+    height="866"
+    viewBox="0 0 1037 866"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+>
+    <style>
+        text {
+            fill: #1e1e1e;
+            font-family: "Marker Felt";
+            font-size: 48px;
+            letter-spacing: 0.08em;
+            text-anchor: middle;
+        }
+    </style>
+    <image width="1037" height="866" href={bg.src} />
+    <text x="518" y="175">What a {timescale}, huh?</text>
+    <text x="388" y="321">
+        Captain, it’s {captainIts}
+    </text>
+</svg>
